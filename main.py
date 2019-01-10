@@ -34,9 +34,9 @@ def list_tables()->List[str]:
 all_tables = {t.get("Tables_in_business_data_db"): True for t in list_tables()}
 
 
-@app.route("/by_field/<table_name>/<field>/<field_val>", defaults={"limit": 1, "fields_to_get": "*"})
-@app.route("/by_field/<table_name>/<field>/<field_val>/<limit>", defaults={"fields_to_get": "*"})
-@app.route("/by_field/<table_name>/<field>/<field_val>/<limit>/<fields_to_get>")
+@app.route("/<table_name>/<field>/<field_val>", defaults={"limit": 1, "fields_to_get": "*"}, methods=["GET"])
+@app.route("/<table_name>/<field>/<field_val>/<limit>", defaults={"fields_to_get": "*"}, methods=["GET"])
+@app.route("/<table_name>/<field>/<field_val>/<limit>/<fields_to_get>", methods=["GET"])
 def get_one(table_name: str, field: str, field_val: str, limit: int, fields_to_get: str):
     if not all_tables.get(table_name):
         abort(404)
