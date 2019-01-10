@@ -1,5 +1,13 @@
 ## Flask based mysql to REST transformer
 
+### Install
+
+Requires anaconda
+
+```bash
+$ conda env create -f pymysql.yml
+```
+
 ### Deploy
 
 `CFG_PATH='path to mysql.json' gunicorn -w 4 -b 127.0.0.1:5000 main:app`
