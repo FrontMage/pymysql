@@ -37,7 +37,7 @@ all_tables = {t.get("Tables_in_business_data_db"): True for t in list_tables()}
 @app.route("/<table_name>/<field>/<field_val>", defaults={"limit": 1, "fields_to_get": "*"}, methods=["GET"])
 @app.route("/<table_name>/<field>/<field_val>/<limit>", defaults={"fields_to_get": "*"}, methods=["GET"])
 @app.route("/<table_name>/<field>/<field_val>/<limit>/<fields_to_get>", methods=["GET"])
-def get_one(table_name: str, field: str, field_val: str, limit: int, fields_to_get: str):
+def get(table_name: str, field: str, field_val: str, limit: int, fields_to_get: str):
     if not all_tables.get(table_name):
         abort(404)
     result = {}
@@ -54,6 +54,25 @@ def get_one(table_name: str, field: str, field_val: str, limit: int, fields_to_g
         limit=limit
     )
     cursor.execute(sql)
-    r = cursor.fetchone()
+    r = cursor.fetchall()
     result = r
     return json.dumps(result, indent=4, ensure_ascii=False)
+
+
+@app.route("/<table_name>/<field>/<field_val>/<limit>", methods=["DELETE"])
+def delete(table_name: str, field: str, field_val: str, limit: int):
+    records_to_delete = get(table_name, field, field_val, limit, "*")
+    sql = """
+        DELETE FROM 
+            {table_name} 
+        WHERE 
+            {field} = {field_val}
+        LIMIT {limit}
+    """.format(
+        table_name=table_name,
+        field=field,
+        field_val=field_val,
+        limit=limit
+    )
+    cursor.execute(sql)
+    return records_to_delete
